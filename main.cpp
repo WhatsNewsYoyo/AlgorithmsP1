@@ -71,7 +71,6 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
 };
 
 
-#include <bits/stdc++.h>
 
 pair<int,int> lcs(const string& s1, const string& s2) {
     int m = s1.length();
