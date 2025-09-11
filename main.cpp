@@ -6,6 +6,34 @@
 using namespace std;
 
 
+string readFile(const string &filename) {
+    ifstream in(filename);
+    if (!in) {
+        cout << "Error: No se pudo abrir " << filename << endl;
+        return "";
+    }
+    string text;
+    char c;
+    while (in.get(c)) {
+            text.push_back(c);
+    }
+    return text;
+}
+
+// Function to read the malicious codes, and store their size, keeping in mind they are always palindromes.
+void mcodeReader(vector<string> mcodesContent, vector<int> mcodesLength){
+    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt"};
+
+    for (const string &filename : mcodes) {    
+        string text = readFile(filename);
+        if (!text.empty()){
+            //Save the file content and size.
+            mcodesContent.push_back(text);
+            mcodesLength.push_back(text.size());
+        }
+    }
+}
+
 // Add the character "#" between characters of the string so the algorithm works for both even and odd-length palindromes. 
 string modifyString(const string &s) {
     
@@ -70,6 +98,26 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
     end = (center + maxLength) / 2;
 };
 
+//Aply the Manacher Algorithm so we can complete part 1 and 2 of the Integer Activity.
+void apply (){
+    vector<string> files = {"transmission1.txt", "transmission2.txt"};
+    
+    for (const string &filename : files) {    
+        string text = readFile(filename);
+        if (!text.empty()){
+            
+            int count = 0;
+            int maxLength = 0;
+            int start = 0;
+            int end;
+
+            manacher(text, count, maxLength, start, end);
+            cout << "File: " << filename << ":\n";
+            cout << "Start position: " << start << " End Position: " << end <<endl;
+            cout << "maxLength" << maxLength << endl;
+        }
+    }
+}
 
 
 pair<int,int> lcs(const string& s1, const string& s2) {
@@ -101,45 +149,12 @@ pair<int,int> lcs(const string& s1, const string& s2) {
         }
         currRow = 1 - currRow; // alternar filas
     }
-
     startPos = min(startPosS1, startPosS2);
 
     return {lengthCommonSubstring, startPos};
 }
 
-int obtainLCS(string &s1, string &s2) {
-    pair<int,int> lcsTransmissions = lcs(s1, s2);
-    cout << "Longitud: " << lcsTransmissions.first << endl;
-    cout << "Inicio: " << lcsTransmissions.second << endl;
-    cout << "Final: " << lcsTransmissions.first + lcsTransmissions.second - 1 << endl;
-
-    return 0;
-}
 
 int main(){
-    vector<string> files = {"transmission1.txt", "transmission2.txt"};
-    
-    for (string &fname : files) {    
-        ifstream in(fname);
-        if (!in) {
-            cout << "Error: No se pudo abrir " << fname << endl;
-            continue;
-        }
-        string s;
-        char c;
-        while (in.get(c)) {
-            s.push_back(c);
-        }        
-        int count = 0;
-        int maxLength = 0;
-        int start = 0;
-        int end;
-
-        manacher(s, count, maxLength, start, end);
-        cout << "File: " << fname << ":\n";
-        cout << "Start position: " << start << " End Position: " << end <<endl;
-
-    }
-
-    
+    apply();
 }
