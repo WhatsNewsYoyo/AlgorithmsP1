@@ -81,7 +81,6 @@ int main(){
             continue;
         }
         string s((istreambuf_iterator<char>(in)),istreambuf_iterator<char>());
-
         cout << "Contenido de " << fname << ":\n";
         cout << s << "\n"; // imprime con saltos reales
     }
