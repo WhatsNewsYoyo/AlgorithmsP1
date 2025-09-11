@@ -23,7 +23,7 @@ string modifyString(const string &s) {
 }
 
 // Function for Manacher Algorithm.
-void manacher(const string &s, int &count, int &maxLength, int &start) {
+void manacher(const string &s, int &count, int &maxLength, int &start, int&end) {
     // Modify the string of the test file.
     string T = modifyString(s);
     int n = T.size();
@@ -66,8 +66,11 @@ void manacher(const string &s, int &count, int &maxLength, int &start) {
         }
     }
     // Start position of the longest palindrome
-    start = (center - maxLength) / 2;
+    start = (center - maxLength) / 2 + 1;
+    end = (center + maxLength) / 2;
 };
+
+
 
 pair<int,int> lcs(const string& s1, const string& s2) {
     int m = s1.length();
@@ -114,10 +117,10 @@ int obtainLCS(string &s1, string &s2) {
 }
 
 int main(){
-    vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};
+    vector<string> files = {"transmission1.txt", "transmission2.txt"};
     
     for (string &fname : files) {    
-        ifstream in(fname, ios::binary);
+        ifstream in(fname);
         if (!in) {
             cout << "Error: No se pudo abrir " << fname << endl;
             continue;
@@ -127,7 +130,16 @@ int main(){
         while (in.get(c)) {
             s.push_back(c);
         }        
-        cout << "Contenido de " << fname << ":\n";
-        cout << s << "\n";
+        int count = 0;
+        int maxLength = 0;
+        int start = 0;
+        int end;
+
+        manacher(s, count, maxLength, start, end);
+        cout << "File: " << fname << ":\n";
+        cout << "Start position: " << start << " End Position: " << end <<endl;
+
     }
+
+    
 }
