@@ -1,6 +1,7 @@
-#include <iostream>;
-#include <string>;
-#include <vector>;
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ string modifyString(const string &s) {
 }
 
 // Function for Manacher Algorithm.
-void manacher(const string &s, int &count, int &maxLength, int &start) {
+void manacher(const string &s, int &count, int &maxLength, int &start, int&end) {
     // Modify the string of the test file.
     string T = modifyString(s);
     int n = T.size();
@@ -65,15 +66,95 @@ void manacher(const string &s, int &count, int &maxLength, int &start) {
         }
     }
     // Start position of the longest palindrome
-    start = (center - maxLength) / 2;
+    start = (center - maxLength) / 2 + 1;
+    end = (center + maxLength) / 2;
 };
 
-void hash(){
-    
+
+
+pair<int,int> lcs(const string& s1, const string& s2) {
+    int m = s1.length();
+    int n = s2.length();
+
+    int lengthCommonSubstring = 0;
+    int startPosS1 = -1;
+    int startPosS2 = -1;
+    int startPos = -1;
+
+    vector<vector<int>> dp(2, vector<int>(n+1, 0)); // matriz 2 x (n+1)
+
+    int currRow = 0;
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[currRow][j] = dp[1-currRow][j-1] + 1;
+
+                if (dp[currRow][j] > lengthCommonSubstring) {
+                    lengthCommonSubstring = dp[currRow][j];
+                    startPosS1 = i - lengthCommonSubstring + 1;
+                    startPosS2 = j - lengthCommonSubstring + 1;
+                }
+            } else {
+                dp[currRow][j] = 0;
+            }
+        }
+        currRow = 1 - currRow; // alternar filas
+    }
+
+    startPos = min(startPosS1, startPosS2);
+
+    return {lengthCommonSubstring, startPos};
 }
 
+int obtainLCS(string &s1, string &s2) {
+    pair<int,int> lcsTransmissions = lcs(s1, s2);
+    cout << "Longitud: " << lcsTransmissions.first << endl;
+    cout << "Inicio: " << lcsTransmissions.second << endl;
+    cout << "Final: " << lcsTransmissions.first + lcsTransmissions.second - 1 << endl;
+
+    return 0;
+}
 
 int main(){
+    vector<string> files = {"transmission1.txt", "transmission2.txt"};
+    
+    for (string &fname : files) {    
+        ifstream in(fname);
+        if (!in) {
+            cout << "Error: No se pudo abrir " << fname << endl;
+            continue;
+        }
+        string s;
+        char c;
 
+        string line;
+        int lineNumber = 0;
 
+        while (in.get(c)) {
+            s.push_back(c);
+        }     
+        
+        
+        int count = 0;
+        int maxLength = 0;
+        int start = 0;
+        int end;
+        int linesUpToEnd = 0;
+
+        manacher(s, count, maxLength, start, end);
+
+        for (int i = 0; i <= end && i < s.size(); i++)
+        {
+            if (s[i] == '\n') {
+             linesUpToEnd++;
+    }
+        }
+        
+        cout << "File: " << fname << ", Lines up to longest palindrome: " << linesUpToEnd + 1<< ":\n";
+        cout << "Start position: " << start << " End Position: " << end <<endl;
+
+    }
+
+    
 }
