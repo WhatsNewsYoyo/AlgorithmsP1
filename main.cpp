@@ -108,7 +108,7 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     return {lengthCommonSubstring, startPos};
 }
 
-string readFile(const string &filename) {
+string readFileLCS(const string &filename) {
     ifstream in(filename);
 
     stringstream buffer;
@@ -143,8 +143,8 @@ int main(){
 
     }
 
-    string s1 = readFile(files[0]);
-    string s2 = readFile(files[1]);
+    string s1 = readFileLCS(files[0]);
+    string s2 = readFileLCS(files[1]);
 
     pair<int,int> transmissions = lcs(s1, s2);
 
