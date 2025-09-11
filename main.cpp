@@ -69,9 +69,7 @@ void manacher(const string &s, int &count, int &maxLength, int &start) {
     start = (center - maxLength) / 2;
 };
 
-void hash(){
-    
-}
+
 
 int main(){
     vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};

@@ -3,6 +3,7 @@
         "Manacher"
     ],
     "files.associations": {
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "ostream": "cpp"
     }
 }
