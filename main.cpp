@@ -107,10 +107,7 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     return {lengthCommonSubstring, startPos};
 }
 
-int main() {
-    string s1 = "Geeks";
-    string s2 = "QuizGeeks";
-
+int obtainLCS(string &s1, string &s2) {
     pair<int,int> lcsTransmissions = lcs(s1, s2);
     cout << "Longitud: " << lcsTransmissions.first << endl;
     cout << "Inicio: " << lcsTransmissions.second << endl;
@@ -119,7 +116,6 @@ int main() {
     return 0;
 }
 
-/*
 int main(){
     vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};
     
@@ -138,4 +134,3 @@ int main(){
         cout << s << "\n";
     }
 }
-*/
