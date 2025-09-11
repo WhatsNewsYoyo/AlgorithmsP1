@@ -1,6 +1,7 @@
-#include <iostream>;
-#include <string>;
-#include <vector>;
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -74,6 +75,14 @@ void hash(){
 
 
 int main(){
+    vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};
 
+    for (string &fname : files) {
+        ifstream in(fname);
 
+        string s;
+        in >> s;
+
+        cout << s << endl;
+    }
 }
