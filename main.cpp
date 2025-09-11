@@ -86,6 +86,6 @@ int main(){
             s.push_back(c);
         }        
         cout << "Contenido de " << fname << ":\n";
-        cout << s << "\n"; // imprime con saltos reales
+        cout << s << "\n";
     }
 }
