@@ -9,6 +9,8 @@
         "iostream": "cpp",
         "xstring": "cpp",
         "vector": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "chrono": "cpp",
+        "functional": "cpp"
     }
 }

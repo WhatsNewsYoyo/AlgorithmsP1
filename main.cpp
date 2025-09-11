@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <fstream>
 
@@ -107,13 +108,14 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     return {lengthCommonSubstring, startPos};
 }
 
-int obtainLCS(string &s1, string &s2) {
-    pair<int,int> lcsTransmissions = lcs(s1, s2);
-    cout << "Longitud: " << lcsTransmissions.first << endl;
-    cout << "Inicio: " << lcsTransmissions.second << endl;
-    cout << "Final: " << lcsTransmissions.first + lcsTransmissions.second - 1 << endl;
+string readFile(const string &filename) {
+    ifstream in(filename);
 
-    return 0;
+    stringstream buffer;
+
+    buffer << in.rdbuf(); // leer todo de una vez
+
+    return buffer.str();
 }
 
 int main(){
@@ -141,5 +143,12 @@ int main(){
 
     }
 
-    
+    string s1 = readFile(files[0]);
+    string s2 = readFile(files[1]);
+
+    pair<int,int> transmissions = lcs(s1, s2);
+
+    cout << "A substring of length " << transmissions.first
+        << " was found at start position " << transmissions.second << " and end position "
+        << transmissions.first + transmissions.second << endl;
 }
