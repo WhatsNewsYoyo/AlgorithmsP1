@@ -80,7 +80,11 @@ int main(){
             cout << "Error: No se pudo abrir " << fname << endl;
             continue;
         }
-        string s((istreambuf_iterator<char>(in)),istreambuf_iterator<char>());
+        string s;
+        char c;
+        while (in.get(c)) {
+            s.push_back(c);
+        }        
         cout << "Contenido de " << fname << ":\n";
         cout << s << "\n"; // imprime con saltos reales
     }
