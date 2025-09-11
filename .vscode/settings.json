@@ -4,6 +4,9 @@
     ],
     "files.associations": {
         "iosfwd": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iterator": "cpp",
+        "iostream": "cpp",
+        "xstring": "cpp"
     }
 }

@@ -73,13 +73,16 @@ void manacher(const string &s, int &count, int &maxLength, int &start) {
 
 int main(){
     vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};
+    
+    for (string &fname : files) {    
+        ifstream in(fname, ios::binary);
+        if (!in) {
+            cout << "Error: No se pudo abrir " << fname << endl;
+            continue;
+        }
+        string s((istreambuf_iterator<char>(in)),istreambuf_iterator<char>());
 
-    for (string &fname : files) {
-        ifstream in(fname);
-
-        string s;
-        in >> s;
-
-        cout << s << endl;
+        cout << "Contenido de " << fname << ":\n";
+        cout << s << "\n"; // imprime con saltos reales
     }
 }
