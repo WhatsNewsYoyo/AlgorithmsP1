@@ -73,7 +73,56 @@ void hash(){
     
 }
 
+#include <bits/stdc++.h>
 
+pair<int,int> lcs(const string& s1, const string& s2) {
+    int m = s1.length();
+    int n = s2.length();
+
+    int lengthCommonSubstring = 0;
+    int startPosS1 = -1;
+    int startPosS2 = -1;
+    int startPos = -1;
+
+    vector<vector<int>> dp(2, vector<int>(n+1, 0)); // matriz 2 x (n+1)
+
+    int currRow = 0;
+
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
+            if (s1[i-1] == s2[j-1]) {
+                dp[currRow][j] = dp[1-currRow][j-1] + 1;
+
+                if (dp[currRow][j] > lengthCommonSubstring) {
+                    lengthCommonSubstring = dp[currRow][j];
+                    startPosS1 = i - lengthCommonSubstring + 1;
+                    startPosS2 = j - lengthCommonSubstring + 1;
+                }
+            } else {
+                dp[currRow][j] = 0;
+            }
+        }
+        currRow = 1 - currRow; // alternar filas
+    }
+
+    startPos = min(startPosS1, startPosS2);
+
+    return {lengthCommonSubstring, startPos};
+}
+
+int main() {
+    string s1 = "Geeks";
+    string s2 = "QuizGeeks";
+
+    pair<int,int> lcsTransmissions = lcs(s1, s2);
+    cout << "Longitud: " << lcsTransmissions.first << endl;
+    cout << "Inicio: " << lcsTransmissions.second << endl;
+    cout << "Final: " << lcsTransmissions.first + lcsTransmissions.second - 1 << endl;
+
+    return 0;
+}
+
+/*
 int main(){
     vector<string> files = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt", "mcode5.txt"};
 
@@ -86,3 +135,4 @@ int main(){
         cout << s << endl;
     }
 }
+*/
