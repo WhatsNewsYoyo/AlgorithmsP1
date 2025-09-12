@@ -12,6 +12,8 @@
         "string": "cpp",
         "chrono": "cpp",
         "functional": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "xlocinfo": "cpp",
+        "xutility": "cpp"
     }
 }

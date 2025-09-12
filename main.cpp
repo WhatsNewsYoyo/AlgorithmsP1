@@ -33,9 +33,79 @@ void mcodeReader(vector<string> &mcodesContent, vector<int> &mcodesLength, vecto
     }
 }
 
+//Functions for part 1.
+
+//Function to look up for proper prefixes wich are also a suffix
+vector<int> ArrayLPS (string &pat){
+    //Size of the pattern to look - basically length of the mcode.
+    int n = pat.size();
+    vector<int>LPS(n, 0);
+
+    //Iterators to check 
+    int len = 0;
+    for(int i=1; i<n ; i++){
+        if(pat[i] == pat[len]){
+            len++;
+            LPS[i] = len;
+        } else {
+            if(len>0){
+                len = LPS[len - 1];
+            } else {
+                LPS[i] = 0;
+            }
+        }
+    }
+    return LPS;
+}
+
+vector<int> search(string &pat, string &text) {
+    vector<int> lps = ArrayLPS(pat);
+    vector<int> res;
+    int j = 0;
+
+    for (int i = 0; i < text.size(); i++) {
+        while (j > 0 && text[i] != pat[j])
+            j = lps[j - 1];
+        if (text[i] == pat[j])
+            j++;
+        if (j == pat.size()) {
+            res.push_back(i - j + 1);
+            j = lps[j - 1];
+        }
+    }
+    return res;
+}
+
+void KMP(){
+    //Files to read (where it will look for the Patterns of the Mcodes)
+    vector<string> files = {"transmission1.txt", "transmission2.txt"};
+    vector<string> mcodes = {"mcode1.txt", "mcode3.txt", "mcode2.txt", "mcode4.txt", "mcode5.txt"}; 
+    
+    cout << "\nPart 3 : " << endl;
+    //Look at both files to check if any of them has a mcode.
+    for (const string &TransmissionFilename : files) {    
+        string TransmissionText = readFile(TransmissionFilename);
+        if (!TransmissionText.empty()){
+            for (const string &mcodeFileName : mcodes) {    
+                string mcodeText = readFile(mcodeFileName);
+                if (!mcodeText.empty()){
+                  
+                    vector<int>res = search(mcodeText, TransmissionText);
+                    if (!res.empty()){
+                        cout << "(true) the file: " << TransmissionFilename << "contains the code: " << mcodeText << "contained in the file: " << mcodeFileName << "\n";
+                    } else {
+                        cout << "(false) the file: " << TransmissionFilename << "doesn't contain the code: " << mcodeText << "contained in the file: " << mcodeFileName << "\n"; 
+                    }
+                    
+                } else { cout << "Empty mcode : "<< mcodeFileName << endl;}
+            }
+
+        } else { cout << "Empty transmission file : " << TransmissionFilename << endl; }
+    }
+}
 
 
-
+// Functions utilized for Part 2 : First to modify the string and later to use manacher
 // Add the character "#" between characters of the string so the algorithm works for both even and odd-length palindromes. 
 string modifyString(const string &s) {
     
@@ -66,15 +136,13 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
     // For every character in the modified string.
     for (int i = 1; i < n - 1; i++) {
         int mirror = 2 * C - i;
-        // If it's within the current palindrome
+        // If it's within the current palindrome. If it's beyond or touches R it will ignore this
         if (i < R)
             P[i] = min(R - i, P[mirror]);
 
-        // If it's beyond or touches R limit
         while (T[i + (1 + P[i])] == T[i - (1 + P[i])])
             //Expand at i
             P[i]++;
-
 
         //Update center and R if it palindrome was expanded beyond R
         if (i + P[i] > R) {
@@ -137,10 +205,12 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     return {lengthCommonSubstring, startPos};
 }
 
-
-//Aply the Manacher Algorithm & the dynamic programming of the LCS so we can complete part 1, 2 and 3 of the Integer Activity.
+//Aply the KMP, the Manacher Algorithm & the dynamic programming of the LCS so we can complete part 1, 2 and 3 of the Integer Activity.
 void apply (){
     
+    //Apply KMP
+    KMP();
+
     //Files to read
     vector<string> files = {"transmission1.txt", "transmission2.txt"}; 
     cout << "\nPart 2 : " << endl;   
