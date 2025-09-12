@@ -129,7 +129,7 @@ pair<int,int> lcs(const string& s1, const string& s2) {
                 dp[currRow][j] = 0;
             }
         }
-        currRow = 1 - currRow; // alternar filas
+        currRow = 1 - currRow;
     }
     startPos = min(startPosS1, startPosS2);
 
@@ -228,7 +228,7 @@ void apply (){
     string s2 = readFile(files[1]);
     pair<int,int> transmissions = lcs(s1, s2);
     cout << "\nPart 3 : \n";
-    cout << "Common substring of length : " << transmissions.first << " - " << "Start Position : " << transmissions.second << "  End position : " << transmissions.first + transmissions.second << endl;
+    cout << "Common substring of length : " << transmissions.first << " - " << "Start Position : " << transmissions.second << "  End position : " << transmissions.first + transmissions.second - 1<< endl;
 }
 
 
