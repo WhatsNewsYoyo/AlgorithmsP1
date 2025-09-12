@@ -6,13 +6,11 @@
 
 using namespace std;
 
-
-
 //Function to open and read files in general.
 string readFile(const string &filename) {
     ifstream in(filename);
     if (!in) {
-        cout << "Error: No se pudo abrir " << filename << endl;
+        cout << "Can't open file : " << filename << endl;
         return "";
     }
     stringstream text;
@@ -22,7 +20,7 @@ string readFile(const string &filename) {
 
 // Function to read the malicious codes, and store their size, keeping in mind they are always palindromes.
 void mcodeReader(vector<string> &mcodesContent, vector<int> &mcodesLength, vector<string> &mcodesName){
-    vector<string> mcodes = {"mcode4.txt", "mcode2.txt", "mcode3.txt"};
+    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode5.txt"};
 
     for (const string &filename : mcodes) {    
         string text = readFile(filename);
@@ -34,6 +32,9 @@ void mcodeReader(vector<string> &mcodesContent, vector<int> &mcodesLength, vecto
         }
     }
 }
+
+
+
 
 // Add the character "#" between characters of the string so the algorithm works for both even and odd-length palindromes. 
 string modifyString(const string &s) {
@@ -52,12 +53,12 @@ string modifyString(const string &s) {
 }
 
 // Function for Manacher Algorithm.
-void manacher(const string &s, int &count, int &maxLength, int &start, int&end, vector<int>&P) {
+void manacher(const string &s, int &count, int &maxLength, int &start, int&end) {
     // Modify the string of the test file.
     string T = modifyString(s);
     int n = T.size();
     // Vector for P[i]
-    P.assign(n, 0);
+    vector<int> P(n, 0);
 
     //Center and Right Boundary.
     int C = 0, R = 0;
@@ -137,39 +138,12 @@ pair<int,int> lcs(const string& s1, const string& s2) {
 }
 
 
-//Aply the Manacher Algorithm & the dynamic programming of the LCS so we can complete part 1, 2  and 3 of the Integer Activity.
+//Aply the Manacher Algorithm & the dynamic programming of the LCS so we can complete part 1, 2 and 3 of the Integer Activity.
 void apply (){
-
-    struct Part1Info {
-        string filename;
-        string pattern;
-        string mcodeName;
-        bool found;
-    };
-
-    struct Part2Info {
-        string filename;
-        int start;
-        int end;
-        int maxLength;
-    };
-    
-    //Variables
-    vector<string> mcodesContent;
-    vector<string> mcodesName;
-    vector<Part2Info> Output2;
-    vector<Part1Info>Output1;
-    vector<int> mcodesLength;
-    vector<int>P;
-
-
-    //Read thte content of the malicious codes
-    mcodeReader(mcodesContent, mcodesLength, mcodesName);
-
     
     //Files to read
-    vector<string> files = {"transmission1.txt", "transmission2.txt"};    
-    
+    vector<string> files = {"transmission1.txt", "transmission2.txt"}; 
+    cout << "\nPart 2 : " << endl;   
     for (const string &filename : files) {    
         string text = readFile(filename);
         if (!text.empty()){
@@ -180,49 +154,13 @@ void apply (){
             int start = 0;
             int end;
 
-            manacher(text, count, maxLength, start, end, P);
-
-
-            //Part 1 of the activity
-            for (int j = 0; j < mcodesContent.size(); ++j) {
-                string pattern = mcodesContent[j];
-                if (pattern.empty()) continue;
-                int L = (int)pattern.size();
-                
-                bool found = false;
-                for (int i = 0; i < P.size(); ++i) {
-                    if (P[i] < L) continue;
-                    int sp = (int)(((int)i - L) / 2);
-                    if (sp < 0) continue;
-                    if (sp + L > (int)text.size()) continue;
-        
-                    if (text.compare(sp, L, pattern) == 0) {
-                        found = true;
-                        break;
-                    }
-                }
-                Output1.push_back({filename, pattern, mcodesName[j], found});
-            }
-
-            //Store part 2
-            Output2.push_back({filename, start, end, maxLength});
+            manacher(text, count, maxLength, start, end);
+            // Print part 2
+            cout << "\nFile : " << filename<<endl;
+            cout << "Start position: " << start << " End Position: " << end << endl;
+            cout << "Length of the Longest Palindrome: " << maxLength << endl;
         }
     }
-
-    // Print part 1
-    cout << "Part 1 :  \n" << endl;
-    for (const auto &info : Output1) {
-        cout << "(" << (info.found ? "true" : "false") << ") the file " << info.filename << " contains the code " << info.pattern << " in the file " << info.mcodeName << endl;
-    }
-    
-    // Print part 2
-    cout << "\nPart 2 : " << endl;
-    for (const auto &info : Output2) {
-        cout << "\nFile : " << info.filename<<endl;
-        cout << "Start position: " << info.start << " End Position: " << info.end << endl;
-        cout << "Length of the Longest Palindrome: " << info.maxLength << endl;
-    }
-
 
     string s1 = readFile(files[0]);
     string s2 = readFile(files[1]);
