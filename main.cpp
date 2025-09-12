@@ -111,7 +111,7 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     int startPosS2 = -1;
     int startPos = -1;
 
-    vector<vector<int>> dp(2, vector<int>(n+1, 0)); // matriz 2 x (n+1)
+    vector<vector<int>> dp(2, vector<int>(n+1, 0)); // matrix 2 x (n+1)
 
     int currRow = 0;
 
@@ -184,13 +184,13 @@ void apply (){
 
 
             //Part 1 of the activity
-            for (size_t j = 0; j < mcodesContent.size(); ++j) {
+            for (int j = 0; j < mcodesContent.size(); ++j) {
                 string pattern = mcodesContent[j];
                 if (pattern.empty()) continue;
                 int L = (int)pattern.size();
                 
                 bool found = false;
-                for (size_t i = 0; i < P.size(); ++i) {
+                for (int i = 0; i < P.size(); ++i) {
                     if (P[i] < L) continue;
                     int sp = (int)(((int)i - L) / 2);
                     if (sp < 0) continue;
