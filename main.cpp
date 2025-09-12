@@ -7,23 +7,22 @@
 using namespace std;
 
 
+
+//Function to open and read files in general.
 string readFile(const string &filename) {
     ifstream in(filename);
     if (!in) {
         cout << "Error: No se pudo abrir " << filename << endl;
         return "";
     }
-    string text;
-    char c;
-    while (in.get(c)) {
-            text.push_back(c);
-    }
-    return text;
+    stringstream text;
+    text << in.rdbuf(); 
+    return text.str();
 }
 
 // Function to read the malicious codes, and store their size, keeping in mind they are always palindromes.
-void mcodeReader(vector<string> mcodesContent, vector<int> mcodesLength){
-    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt"};
+void mcodeReader(vector<string> &mcodesContent, vector<int> &mcodesLength, vector<string> &mcodesName){
+    vector<string> mcodes = {"mcode4.txt", "mcode2.txt", "mcode3.txt"};
 
     for (const string &filename : mcodes) {    
         string text = readFile(filename);
@@ -31,6 +30,7 @@ void mcodeReader(vector<string> mcodesContent, vector<int> mcodesLength){
             //Save the file content and size.
             mcodesContent.push_back(text);
             mcodesLength.push_back(text.size());
+            mcodesName.push_back(filename); 
         }
     }
 }
@@ -52,12 +52,12 @@ string modifyString(const string &s) {
 }
 
 // Function for Manacher Algorithm.
-void manacher(const string &s, int &count, int &maxLength, int &start, int&end) {
+void manacher(const string &s, int &count, int &maxLength, int &start, int&end, vector<int>&P) {
     // Modify the string of the test file.
     string T = modifyString(s);
     int n = T.size();
     // Vector for P[i]
-    vector<int> P(n, 0);
+    P.assign(n, 0);
 
     //Center and Right Boundary.
     int C = 0, R = 0;
@@ -73,6 +73,7 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
         while (T[i + (1 + P[i])] == T[i - (1 + P[i])])
             //Expand at i
             P[i]++;
+
 
         //Update center and R if it palindrome was expanded beyond R
         if (i + P[i] > R) {
@@ -99,28 +100,8 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
     end = (center + maxLength) / 2;
 };
 
-//Aply the Manacher Algorithm so we can complete part 1 and 2 of the Integer Activity.
-void apply (){
-    vector<string> files = {"transmission1.txt", "transmission2.txt"};
-    
-    for (const string &filename : files) {    
-        string text = readFile(filename);
-        if (!text.empty()){
-            
-            int count = 0;
-            int maxLength = 0;
-            int start = 0;
-            int end;
 
-            manacher(text, count, maxLength, start, end);
-            cout << "File: " << filename << ":\n";
-            cout << "Start position: " << start << " End Position: " << end <<endl;
-            cout << "maxLength" << maxLength << endl;
-        }
-    }
-}
-
-
+// Dynamic programming for part 3
 pair<int,int> lcs(const string& s1, const string& s2) {
     int m = s1.length();
     int n = s2.length();
@@ -155,47 +136,102 @@ pair<int,int> lcs(const string& s1, const string& s2) {
     return {lengthCommonSubstring, startPos};
 }
 
-string readFileLCS(const string &filename) {
-    ifstream in(filename);
 
-    stringstream buffer;
+//Aply the Manacher Algorithm & the dynamic programming of the LCS so we can complete part 1, 2  and 3 of the Integer Activity.
+void apply (){
 
-    buffer << in.rdbuf(); // leer todo de una vez
+    struct Part1Info {
+        string filename;
+        string pattern;
+        string mcodeName;
+        bool found;
+    };
 
-    return buffer.str();
-}
-
-int main(){
-    vector<string> files = {"transmission1.txt", "transmission2.txt"};
-    
-    for (string &fname : files) {    
-        ifstream in(fname);
-        if (!in) {
-            cout << "Error: No se pudo abrir " << fname << endl;
-            continue;
-        }
-        string s;
-        char c;
-        while (in.get(c)) {
-            s.push_back(c);
-        }        
-        int count = 0;
-        int maxLength = 0;
-        int start = 0;
+    struct Part2Info {
+        string filename;
+        int start;
         int end;
+        int maxLength;
+    };
+    
+    //Variables
+    vector<string> mcodesContent;
+    vector<string> mcodesName;
+    vector<Part2Info> Output2;
+    vector<Part1Info>Output1;
+    vector<int> mcodesLength;
+    vector<int>P;
 
-        manacher(s, count, maxLength, start, end);
-        cout << "File: " << fname << ":\n";
-        cout << "Start position: " << start << " End Position: " << end <<endl;
 
+    //Read thte content of the malicious codes
+    mcodeReader(mcodesContent, mcodesLength, mcodesName);
+
+    
+    //Files to read
+    vector<string> files = {"transmission1.txt", "transmission2.txt"};    
+    
+    for (const string &filename : files) {    
+        string text = readFile(filename);
+        if (!text.empty()){
+
+            //Variables for Manacher's Algorithm
+            int count = 0;
+            int maxLength = 0;
+            int start = 0;
+            int end;
+
+            manacher(text, count, maxLength, start, end, P);
+
+
+            //Part 1 of the activity
+            for (size_t j = 0; j < mcodesContent.size(); ++j) {
+                string pattern = mcodesContent[j];
+                if (pattern.empty()) continue;
+                int L = (int)pattern.size();
+                
+                bool found = false;
+                for (size_t i = 0; i < P.size(); ++i) {
+                    if (P[i] < L) continue;
+                    int sp = (int)(((int)i - L) / 2);
+                    if (sp < 0) continue;
+                    if (sp + L > (int)text.size()) continue;
+        
+                    if (text.compare(sp, L, pattern) == 0) {
+                        found = true;
+                        break;
+                    }
+                }
+                Output1.push_back({filename, pattern, mcodesName[j], found});
+            }
+
+            //Store part 2
+            Output2.push_back({filename, start, end, maxLength});
+        }
     }
 
-    string s1 = readFileLCS(files[0]);
-    string s2 = readFileLCS(files[1]);
+    // Print part 1
+    cout << "Part 1 :  \n" << endl;
+    for (const auto &info : Output1) {
+        cout << "(" << (info.found ? "true" : "false") << ") the file " << info.filename << " contains the code " << info.pattern << " in the file " << info.mcodeName << endl;
+    }
+    
+    // Print part 2
+    cout << "\nPart 2 : " << endl;
+    for (const auto &info : Output2) {
+        cout << "\nFile : " << info.filename<<endl;
+        cout << "Start position: " << info.start << " End Position: " << info.end << endl;
+        cout << "Length of the Longest Palindrome: " << info.maxLength << endl;
+    }
 
+
+    string s1 = readFile(files[0]);
+    string s2 = readFile(files[1]);
     pair<int,int> transmissions = lcs(s1, s2);
+    cout << "\nPart 3 : \n";
+    cout << "Common substring of length : " << transmissions.first << " - " << "Start Position : " << transmissions.second << "  End position : " << transmissions.first + transmissions.second << endl;
+}
 
-    cout << "A substring of length " << transmissions.first
-        << " was found at start position " << transmissions.second << " and end position "
-        << transmissions.first + transmissions.second << endl;
+
+int main(){
+    apply();  
 }

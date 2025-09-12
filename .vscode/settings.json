@@ -11,6 +11,7 @@
         "vector": "cpp",
         "string": "cpp",
         "chrono": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "utility": "cpp"
     }
 }
