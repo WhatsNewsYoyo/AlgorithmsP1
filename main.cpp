@@ -20,7 +20,7 @@ string readFile(const string &filename) {
 
 // Function to read the malicious codes, and store their size, keeping in mind they are always palindromes.
 void mcodeReader(vector<string> &mcodesContent, vector<int> &mcodesLength, vector<string> &mcodesName){
-    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode5.txt"};
+    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt"};
 
     for (const string &filename : mcodes) {    
         string text = readFile(filename);
@@ -58,12 +58,14 @@ vector<int> ArrayLPS (string &pat){
     return LPS;
 }
 
+// Function to search for a pattern in a certain text.
 vector<int> search(string &pat, string &text) {
     vector<int> lps = ArrayLPS(pat);
     vector<int> res;
     int j = 0;
 
     for (int i = 0; i < text.size(); i++) {
+        //If there is a mismatch
         while (j > 0 && text[i] != pat[j])
             j = lps[j - 1];
         if (text[i] == pat[j])
@@ -79,9 +81,9 @@ vector<int> search(string &pat, string &text) {
 void KMP(){
     //Files to read (where it will look for the Patterns of the Mcodes)
     vector<string> files = {"transmission1.txt", "transmission2.txt"};
-    vector<string> mcodes = {"mcode1.txt", "mcode3.txt", "mcode2.txt", "mcode4.txt", "mcode5.txt"}; 
+    vector<string> mcodes = {"mcode1.txt", "mcode2.txt", "mcode3.txt", "mcode4.txt"}; 
     
-    cout << "\nPart 3 : " << endl;
+    cout << "\nPart 1 : " << endl;
     //Look at both files to check if any of them has a mcode.
     for (const string &TransmissionFilename : files) {    
         string TransmissionText = readFile(TransmissionFilename);
@@ -92,9 +94,9 @@ void KMP(){
                   
                     vector<int>res = search(mcodeText, TransmissionText);
                     if (!res.empty()){
-                        cout << "(true) the file: " << TransmissionFilename << "contains the code: " << mcodeText << "contained in the file: " << mcodeFileName << "\n";
+                        cout << "(true) the file: " << TransmissionFilename << " contains the code: " << mcodeText << " contained in the file: " << mcodeFileName << "\n"<<endl;
                     } else {
-                        cout << "(false) the file: " << TransmissionFilename << "doesn't contain the code: " << mcodeText << "contained in the file: " << mcodeFileName << "\n"; 
+                        cout << "(false) the file: " << TransmissionFilename << " doesn't contain the code: " << mcodeText << " contained in the file: " << mcodeFileName << "\n"<<endl; 
                     }
                     
                 } else { cout << "Empty mcode : "<< mcodeFileName << endl;}
@@ -171,7 +173,7 @@ void manacher(const string &s, int &count, int &maxLength, int &start, int&end) 
 
 
 // Dynamic programming for part 3
-pair<int,int> lcs(const string& s1, const string& s2) {
+pair<int,int> lcs(const string& s1, const string& s2 ,int &fileIndex) {
     int m = s1.length();
     int n = s2.length();
 
@@ -201,7 +203,13 @@ pair<int,int> lcs(const string& s1, const string& s2) {
         currRow = 1 - currRow;
     }
     startPos = min(startPosS1, startPosS2);
-
+    
+    if(startPosS1 <= startPosS2){
+        fileIndex = 1;
+    } else{
+        fileIndex=2;
+    }
+    
     return {lengthCommonSubstring, startPos};
 }
 
@@ -231,12 +239,14 @@ void apply (){
             cout << "Length of the Longest Palindrome: " << maxLength << endl;
         }
     }
-
+    int fileIndex;
+    string identifier;
     string s1 = readFile(files[0]);
     string s2 = readFile(files[1]);
-    pair<int,int> transmissions = lcs(s1, s2);
+    pair<int,int> transmissions = lcs(s1, s2, fileIndex);
+
     cout << "\nPart 3 : \n";
-    cout << "Common substring of length : " << transmissions.first << " - " << "Start Position : " << transmissions.second << "  End position : " << transmissions.first + transmissions.second - 1<< endl;
+    cout << "Common substring of length : " << transmissions.first << " - " << "Start Position : " << transmissions.second  << "  End position : " << transmissions.first + transmissions.second - 1<< " - This positions correspond to TransmisionFile" << fileIndex << endl;
 }
 
 
